@@ -390,7 +390,7 @@ class CharlesSchwabEmployeeSponsoredTaxReporter(FileTaxReporter):
                 split_date, factor, is_reverse = candidate
                 group_candidates.append((split_date, factor, is_reverse, len(observations)))
         if not group_candidates:
-            return self._detect_split_params_from_unit_values(transactions)
+            return None
 
         factor_direction_weights: Counter[tuple[int, bool]] = Counter()
         for _split_date, factor, is_reverse, weight in group_candidates:
@@ -406,47 +406,6 @@ class CharlesSchwabEmployeeSponsoredTaxReporter(FileTaxReporter):
         if sales_split_date is not None:
             split_date = sales_split_date
         return split_date, factor, is_reverse
-
-    def _detect_split_params_from_unit_values(
-        self,
-        transactions: list[object],
-    ) -> tuple[date, int, bool] | None:
-        observations = self._collect_unkeyed_unit_value_observations(transactions)
-        if not observations:
-            return None
-        return self._candidate_from_group(observations)
-
-    def _collect_unkeyed_unit_value_observations(
-        self,
-        transactions: list[object],
-    ) -> list[tuple[date, float]]:
-        observations: list[tuple[date, float]] = []
-        for tx in transactions:
-            if not isinstance(tx, dict):
-                continue
-            tx_date = self._parse_tx_date(tx.get("Date"))
-            if tx_date is None:
-                continue
-            detail_rows_obj = tx.get("TransactionDetails")
-            if not isinstance(detail_rows_obj, list):
-                continue
-            for detail in self._iter_detail_dicts(detail_rows_obj):
-                value = self._first_positive_unit_value(detail)
-                if value is None:
-                    continue
-                observations.append((tx_date, value))
-        return observations
-
-    def _first_positive_unit_value(self, detail: dict[str, object]) -> float | None:
-        for value_key in (
-            "VestFairMarketValue",
-            "PurchasePrice",
-            "SubscriptionFairMarketValue",
-        ):
-            value, _ = self._parse_money(detail.get(value_key))
-            if value is not None and value > 0:
-                return value
-        return None
 
     def _collect_scale_groups(
         self,
