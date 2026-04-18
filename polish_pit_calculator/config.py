@@ -190,8 +190,8 @@ class TaxRecord:
     def get_name_to_pit_label_mapping() -> dict[str, str]:
         """Map output row names to PIT form coordinates."""
         return {
-            "Trade Revenue": "PIT-38/C20",
-            "Trade Cost": "PIT-38/C21",
+            "Trade Revenue": "PIT-38/C22",
+            "Trade Cost": "PIT-38/C23",
             "Trade Loss from Previous Years": "PIT-38/D28",
             "Trade Loss": "PIT-38/D28 - Next Year",
             "Crypto Revenue": "PIT-38/E34",
