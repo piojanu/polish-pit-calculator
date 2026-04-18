@@ -414,6 +414,7 @@ class TestCharlesSchwabEmployeeSponsoredTaxReporter(TestCase):
                                 "Type": "RS",
                                 "Shares": "1",
                                 "SalePrice": "$580.00",
+                                "VestDate": "12/15/2023",
                                 "VestFairMarketValue": "$422.39",
                                 "TotalCostBasis": "$422.39",
                             }
@@ -433,6 +434,7 @@ class TestCharlesSchwabEmployeeSponsoredTaxReporter(TestCase):
                                 "Type": "RS",
                                 "Shares": "48",
                                 "SalePrice": "$150.00",
+                                "VestDate": "12/15/2023",
                                 "VestFairMarketValue": "$42.239",
                                 "TotalCostBasis": "$2,027.47",
                             }
@@ -472,6 +474,7 @@ class TestCharlesSchwabEmployeeSponsoredTaxReporter(TestCase):
                                 "Type": "RS",
                                 "Shares": "1",
                                 "SalePrice": "$580.00",
+                                "VestDate": "12/15/2023",
                                 "VestFairMarketValue": "$422.39",
                                 "TotalCostBasis": "$422.39",
                             }
@@ -491,6 +494,7 @@ class TestCharlesSchwabEmployeeSponsoredTaxReporter(TestCase):
                                 "Type": "RS",
                                 "Shares": "48",
                                 "SalePrice": "$150.00",
+                                "VestDate": "12/15/2023",
                                 "VestFairMarketValue": "$42.239",
                                 "TotalCostBasis": "$2,027.47",
                             }
@@ -796,8 +800,8 @@ class TestSchwabAlignmentHelpers(TestCase):
             == base
         )
 
-    def test_fallback_split_helpers_and_series_parsing(self) -> None:
-        """Exercises fallback split inference and sale-price series parsing guards."""
+    def test_candidate_and_series_parsing_guards(self) -> None:
+        """Exercises candidate edge cases, no-split detection, and sale-price series guards."""
         reporter = CharlesSchwabEmployeeSponsoredTaxReporter(_json_buf({}))
         base = date(2024, 1, 1)
         assert (
@@ -818,7 +822,7 @@ class TestSchwabAlignmentHelpers(TestCase):
             )
             is not None
         )
-        fallback_transactions: list[object] = [
+        no_split_transactions: list[object] = [
             {"Date": "bad", "TransactionDetails": []},
             {"Date": "01/01/2024", "TransactionDetails": "bad"},
             {
@@ -832,11 +836,9 @@ class TestSchwabAlignmentHelpers(TestCase):
                 "TransactionDetails": [{"Details": {"VestFairMarketValue": "$2.00"}}],
             },
         ]
-        fallback = getattr(reporter, "_detect_split_params_from_unit_values")(fallback_transactions)
-        assert fallback is not None
-        assert fallback[1] == 10
-        assert fallback[2] is False
-        assert getattr(reporter, "_first_positive_unit_value")({"VestFairMarketValue": ""}) is None
+        assert (
+            getattr(reporter, "_detect_split_params")(no_split_transactions) is None
+        )
 
         sale_series_transactions: list[object] = [
             {"Date": "bad", "Action": "Sale", "TransactionDetails": []},
