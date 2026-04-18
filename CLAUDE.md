@@ -73,6 +73,44 @@ Required attachments:
 Dividends under art. 30a don't need PIT/ZG — they go straight into PIT-38
 section G.
 
+## Why dividends are "zryczałtowany" (and capital gains aren't)
+
+`Zryczałtowany podatek` is a distinct tax regime, not just a word. When you
+see it on a PIT-38 field label (notably poz. 46 and 47), it signals four
+properties that apply together:
+
+1. **Fixed rate** — 19 % flat for art. 30a ust. 1 pkt 1–5 (interest, bond
+   discount, dividends, capital-fund distributions). No progressive scale.
+2. **Applied to *przychód* (gross), not dochód** — you cannot deduct
+   brokerage fees, FX costs, or any acquisition cost from the dividend
+   base. This is why section G has no "koszty" field. Contrast with
+   section C (art. 30b): poz. 22 is przychód, poz. 23 subtracts costs,
+   poz. 28 is the dochód that gets taxed.
+3. **Settled in isolation** — never pooled with skala (art. 27) or
+   liniowy (art. 30c) income. Dividend tax does not add to or draw from
+   the capital-gains calculation. Losses don't cross the boundary either.
+4. **Usually collected by płatnik at source** — hence the Część I poz. 65
+   declare-only line (art. 45 ust. 3c) when a Polish brokerage or bank
+   already withheld. When no płatnik is involved (foreign broker), the
+   taxpayer self-settles via section G poz. 47–49, using the art. 30a
+   ust. 9 credit mechanism for any foreign WHT (capped at Polish 19 %;
+   practically capped at the treaty rate — 15 % for US).
+
+The practical upshot for a Schwab-US filer (no Polish płatnik):
+
+- Poz. 46 — leave 0 (nothing withheld in Poland).
+- Poz. 47 — 19 % × Σ(gross USD dividend × NBP_{T-1}), rounded *up* to grosz
+  per art. 63 § 1 ordynacji podatkowej (Polish rounding rule for kwoty
+  w groszach in art. 30a ust. 1 pkt 1–3).
+- Poz. 48 — Σ(USD WHT × NBP_{T-1}), capped at poz. 47.
+- Poz. 49 — poz. 47 − poz. 48, rounded to full złote.
+
+e-PIT (`epit.podatki.gov.pl`) renders these on the same screen as one
+card titled *"Zryczałtowany podatek od przychodów (dochodów), w tym
+uzyskanych poza granicami Polski"*; poz. 46 is pre-filled/locked (what
+Polish płatnik withheld), poz. 47 and 48 are free-form, poz. 49 is
+computed.
+
 ## Label mapping in the tool (current state)
 
 `TaxRecord.get_name_to_pit_label_mapping()` in `config.py` uses the v18
