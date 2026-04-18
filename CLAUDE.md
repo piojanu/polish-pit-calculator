@@ -63,10 +63,9 @@ Required attachments:
   no foreign tax was withheld. Section C.3 of PIT/ZG:
   - poz. 9 country name (e.g. "Stany Zjednoczone Ameryki")
   - poz. 10 country code (`US` for USA)
-  - poz. 31 dochód (art. 30b) — equals the foreign portion of PIT-38 poz. 28
-  - poz. 32 podatek zapłacony za granicą — 0 PLN for US capital gains
-  - (verify poz. 31/32 on the live v8 form before filing; this was derived
-    from secondary sources, not from a first-party read)
+  - poz. 29 dochód (art. 30b) — equals the foreign portion of PIT-38 poz. 28
+  - poz. 30 podatek zapłacony za granicą — 0 PLN for US capital gains
+    (confirmed on the live e-PIT v8 form during the 2025 filing)
 - **DSF-1** — only if solidarity tax (4 % above 1 M PLN income) applies.
 - **PIT/O** — for donation relief, etc.
 
@@ -139,7 +138,7 @@ The tool computes PLN amounts correctly, but several things must still be
 done by hand:
 
 1. **PIT/ZG is not emitted.** Create one per source country. For a Schwab-US
-   filer: poz. 31 = the foreign portion of PIT-38 poz. 28; poz. 32 = 0 PLN.
+   filer: poz. 29 = the foreign portion of PIT-38 poz. 28; poz. 30 = 0 PLN.
 2. **Loss-carryforward limits** — `TaxRecord.trade_profit` subtracts
    `trade_loss_from_previous_years` in full. User must clamp to 50 %
    (pre-2019 losses) / 5 M PLN (2019+ losses) per year themselves.
@@ -186,7 +185,6 @@ done by hand:
 - **NBP non-business-day fix** (`caches.py`): walk back one NBP business
   day when the trade date itself is not in the table, instead of relying
   on `.shift()` plus dict lookup.
-- **Verify PIT/ZG v8 poz. 31/32** against the live form (first-party read).
 
 ## Reproducing the Schwab run in a new session (network required)
 
